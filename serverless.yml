@@ -1,0 +1,48 @@
+service: datadog-sls
+
+plugins:
+  - serverless-plugin-datadog
+  - serverless-webpack
+  - serverless-offline
+package:
+  individually: true
+
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules:
+      forceExclude:
+        - aws-sdk
+    packagerOptions:
+      scripts:
+        - rm -rf node_modules/aws-sdk
+
+  datadog:
+    apiKey: ${self:custom.secrets.DD_API_KEY, ''}
+    addLayers: true
+    site: datadoghq.eu
+    flushMetricsToLogs: false
+
+  serverless-offline:
+    port: 3042
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  logs:
+    restApi: true
+  stage: dev
+  region: eu-west-3
+  timeout: 30
+  memorySize: 1024
+
+functions:
+
+  myfunc:
+    handler: src/index.handler
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+          integration: lambda-proxy
