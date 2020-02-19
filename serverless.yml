@@ -18,7 +18,7 @@ custom:
         - rm -rf node_modules/aws-sdk
 
   datadog:
-    apiKey: ${self:custom.secrets.DD_API_KEY, ''}
+    apiKey: 'whatever'
     addLayers: true
     site: datadoghq.eu
     flushMetricsToLogs: false
